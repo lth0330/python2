@@ -26,8 +26,8 @@ iris_data = np.column_stack( (target_iris['PetalLengthCm'], target_iris['PetalWi
 
 # [단계 5] 정답 데이터(Target) 생성
 # Iris-setosa : 1 # Iris-versicolor : 0 # 으로 구성된 iris_target 리스트를 생성하세요.
-print((target_iris['Species']=='Iris-setosa').sum())
-print((target_iris['Species']=='Iris-versicolor').sum())
+# print((target_iris['Species']=='Iris-setosa').sum())
+# print((target_iris['Species']=='Iris-versicolor').sum())
 iris_target = np.concatenate((np.ones(50) , np.zeros(50)))
 # print(iris_target)
 
