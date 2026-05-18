@@ -56,3 +56,17 @@ print(knr.predict(test_input))           # 모델 예측
 
 print(test_input)  [8.4] # [ 8.4][18. ][27.5 [21.3] ~ 
 print(knr.predict(test_input))  # [  61.4   78.   248.   117.  ] ~ 
+
+# [6] chlrmswjqd 이웃 회귀는 이웃의 평균값으로 예측한다. 하이퍼라미터(k) 조절
+# k = 이웃 개수 정하기 
+
+knr = KNeighborsRegressor () # 모델 객체 생성
+# 임의의 길이 생성 m, 임의의 물고리 길이 5부터 45까지 생성 (45개 임의값)
+x = np.arrage(5,45).reshape(-1,1)
+
+print(x) 
+
+for k in[1,3,5,10] : # 이웃 개수를 4가지 (1,3,5,10) 모델 학습
+    knr.n_neighbors = k
+    knr.fit(train_input, train_target)
+    
