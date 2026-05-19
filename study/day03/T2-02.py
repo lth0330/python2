@@ -18,7 +18,7 @@
 
 # [1] 숭어의 '길이' , '무게' : '길이'(특성) 에 따른 '무게'(타깃) 예측
 import pandas as pd 
-df = pd.read_csv( './day03/Fish.csv')
+df = pd.read_csv( 'study/day01/Fish.csv')
 fish_data = df[ df['Species'].isin(['Perch']) ]
 perch_length = fish_data['Length2'].values
 perch_weight = fish_data['Weight'].values
@@ -73,3 +73,27 @@ plt.plot( [ 15, 100 ] , lr.predict([[15],[100]]) ) # 회귀선 그리기 # 0 길
 plt.show()
 
 # [3] ( 다항 : 여러개 항 ) 선형회귀 모델 # 2차 방정식 
+ 
+
+
+import numpy as np 
+train_poly = np.column_stack( (train_input**2,train_input))  # ** : 제곱 [ 길이제곱 , 길이]
+print(train_poly)
+
+lr = LinearRegression()
+lr.fit(train_poly , train_target) # 다항으로 학습 
+
+# 예측할 자료 , 길이 : 50인 무게 예측
+print(lr.predict([[50**2,50]]))
+
+# 여러개 예측
+point = np.arange(15,50)  # 15부터 50까지 1씩 증가하는 리스트 반환
+point_poly = np.column_stack((point**2, point))
+print(point_poly)
+
+# 시각화
+plt.scatter(train_input , train_target)
+plt.plot(point, lr.predict(point_poly))
+plt.show()
+test_poly = np.column_stack(( test_input**2, test_input))
+print(lr.score(test_poly , test_target)) # 다항 회구 평가 # 
