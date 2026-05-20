@@ -83,12 +83,27 @@ best_poly = best_optimization['poly']
 scaler = best_optimization['scaler']
 print( f'최적의 모델 : {best_model} , 다항특성 : {best_poly} , 스케일링 : {scaler}')
 
+
 # [4] 추론 함수 구현: 새로운 학생의 6가지 특성 데이터를 인자로 받아 최적 모델의 다항 구조와 스케일링 기준을 거쳐 성적을 예측하는 함수를 구현하시오.
+def exam_score_predict(study_hours,attendance,sleep_hours,internet_usage,assignments_completed,previous_score) :  # 매개변수에 '*' 한번에 여러 변수들을 튜플로 받을 수 있다.
+    list_data = [[study_hours,attendance,sleep_hours,internet_usage,assignments_completed,previous_score]]
 
+    # 특성 공학 ( 다항 만들기) 적용
+    list_poly = best_poly.transform(list_data)    
 
+    # 예측 모델이 스케일링 사용할지 여부 판단
+    if scaler is not None : # 만약에 scaler 사용한 모델만 스케일링 
+        list_poly= scaler.transform(list_poly)  # 스케일링 적용
 
+    # 예측하기
+    result = best_model.predict(list_poly) # 예측한 값 반환
+    return result[0] #예측한 값을 반환한다.   # 항상 예측결과도 리스트로 반환하기 때문에 인덱스[0] 으로 하나 추출해야함
+    
+    
 # [5] 샘플 데이터 검증: 구현된 함수에 두 가지 대조군 샘플을 대입하여 시험성적을 예측하시오.
-    # study_hours=9, attendance=95, sleep_hours=7, internet_usage=2, assignments_completed=18, previous_score=85
-
-
-    # study_hours=2, attendance=60, sleep_hours=5, internet_usage=9, assignments_completed=4, previous_score=50
+# study_hours=9, attendance=95, sleep_hours=7, internet_usage=2, assignments_completed=18, previous_score=85
+# study_hours=2, attendance=60, sleep_hours=5, internet_usage=9, assignments_completed=4, previous_score=50
+result = exam_score_predict(9,95,7,2,18,85)
+print(f'결과 : {result}점')
+result = exam_score_predict(2,60,5,9,4,50)
+print(f'결과 : {result}점')
