@@ -1,6 +1,6 @@
 # [1] 숭어 의 '길이','높이','두께' (3가지특성)  무게 (1가지타깃)
 import pandas as pd 
-df = pd.read_csv( './day02/Fish.csv')
+df = pd.read_csv( 'study/day01/Fish.csv')
 perch = df[ df['Species'] == 'Perch' ]
 perch_full = perch[ ['Length2' , 'Height', 'Width'] ]
 perch_weight = perch[ 'Weight'].values
