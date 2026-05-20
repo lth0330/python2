@@ -29,19 +29,24 @@ train_input, test_input,train_target,test_target = train_test_split(student_full
 from sklearn.preprocessing import PolynomialFeatures , StandardScaler
 from sklearn.linear_model import LinearRegression , Ridge , Lasso
 
+# [3] 최적 모델을 찾기 위한 리스트
+optimization = []
+
+
 for degree in [1,2,3,4,5] :
     poly = PolynomialFeatures( degree = degree, include_bias=False) # degree = 차수(1부터 5까지 반복) , include_bias=False - 기본값 1 제거
     poly.fit(train_input)
     train_poly = poly.transform(train_input)
     test_poly = poly.transform(test_input)
-    print(f"\n{degree} 차수의 특성 수 ")
-    print(train_poly.shape)
+    # print(f"\n{degree} 차수의 특성 수 ")
+    # print(train_poly.shape)
 
     # 선형 회귀
     lr = LinearRegression()
     lr.fit(train_poly, train_target)
     r2 = lr.score(test_poly , test_target)
-    print(f'{degree} 차수의 선형 회귀 결정 계수 : {r2}')
+    # print(f'{degree} 차수의 선형 회귀 결정 계수 : {r2}') # 결정계수란? 해당 모델이 예측한 결과가 얼마나 잘 설명
+    optimization.append({'r2' : r2, "model" : lr ,'poly': poly, ' degree' : degree , 'scaler': None , "alpha" : None})
 
     # 스케일링
     ss = StandardScaler()
@@ -55,19 +60,31 @@ for degree in [1,2,3,4,5] :
         ridge = Ridge(alpha = alpha)  # 0.01 ~ 100 까지 반복    
         ridge.fit(train_scaled, train_target)
         r2 = ridge.score(test_scaled, test_target)
-        print(f'{degree} 차수의 릿지강도 : {alpha}의 결정계수 : {r2}')
+        # print(f'{degree} 차수의 릿지강도 : {alpha}의 결정계수 : {r2}')
+        optimization.append({'r2' : r2, "model" : ridge ,'poly': poly, ' degree' : degree , 'scaler': ss , "alpha" : alpha})
 
         #라쏘 모델 
         lasso = Lasso(alpha = alpha)
         lasso.fit(train_scaled, train_target)
         r2 = lasso.score(test_scaled, test_target)
-        print(f'{degree} 차수의 라쏘강도 : {alpha}의 결정계수 : {r2}\n')
-    
+        # print(f'{degree} 차수의 라쏘강도 : {alpha}의 결정계수 : {r2}\n')
+        optimization.append({'r2' : r2, "model" : lasso ,'poly': poly, ' degree' : degree , 'scaler': ss , "alpha" : alpha})
 
 # [3] 최적 모델 선정: 테스트 데이터셋(`X_test`) 기준 최고의 결정계수를 달성하는 최적의 알고리즘, 차수, 알파 값을 자동 도출하고 추론 엔진에 매핑하시오.
+# 예] max(리스트, key = lambda x : x['기준열'])
+list = [ {'data1': 10 ,'data2' : 20} ,{'data1': 40 ,'data2' : 15}]
+print(max(list, key = lambda x : x['data2']))
+print(max(list, key = lambda x : x['data1']))
 
+# 즉 ] r2 기준으로 가장 큰 r2 의 요소 / 딕셔너리 찾기
+best_optimization = max(optimization, key=lambda x : x['r2']) 
+best_model = best_optimization['model']
+best_poly = best_optimization['poly']
+scaler = best_optimization['scaler']
+print( f'최적의 모델 : {best_model} , 다항특성 : {best_poly} , 스케일링 : {scaler}')
 
 # [4] 추론 함수 구현: 새로운 학생의 6가지 특성 데이터를 인자로 받아 최적 모델의 다항 구조와 스케일링 기준을 거쳐 성적을 예측하는 함수를 구현하시오.
+
 
 
 # [5] 샘플 데이터 검증: 구현된 함수에 두 가지 대조군 샘플을 대입하여 시험성적을 예측하시오.
