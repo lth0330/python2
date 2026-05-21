@@ -1,5 +1,6 @@
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import PolynomialFeatures
 import pandas as pd
 # 서비스
 class Service : 
@@ -14,11 +15,17 @@ class Service :
         train_input , test_input , train_target , test_target = train_test_split( train_data , target_data , test_size=0.2, random_state=42)
 
         # 2) 학습모델 만들기 
+
+        poly = PolynomialFeatures()
+        poly.fit( train_input )
+        train_poly = poly.transform( train_input )
+        test_poly = poly.transform( test_input ) 
+
         lr = LinearRegression()
-        lr.fit( train_input , train_target )
+        lr.fit( train_poly , train_target )
 
         # 3) 학습모델 결정계수확인
-        print( lr.score( test_input , test_target ) ) # 0.8466731821471493
+        print( lr.score( test_poly , test_target ) ) # 0.8466731821471493
 
         # 4) 모델 저장
         self.model = lr 
@@ -31,7 +38,7 @@ class Service :
             return "학습 모델이 없습니다."
         
         # 2) 만약에 모델이 있으면 입력받은 딕셔너리 리스트로 변경
-        del car['차량번호ID']
+        del car['차량번호ID'] 
         del car['매매가격만원']
         car = [ value for value in car.values() ]
 
