@@ -3,7 +3,7 @@
 
 #[1]
 import pandas as pd 
-df = pd.read_csv( './day06/wine.csv')
+df = pd.read_csv( 'study/day06/wine.csv')
 data = df[['alcohol','sugar','pH']]         # 와인들의 속성 3개
 target = df['class']                        # 1:화이트와인 0:레드와인
 

@@ -1,0 +1,101 @@
+{
+  // Apply VSCode code color settings only in this project.
+  "editor.semanticHighlighting.enabled": true,
+  "editor.semanticTokenColorCustomizations": {
+    "enabled": true,
+    "rules": {
+      "variable": "#4FC1FF",
+      "parameter": "#FFB86C",
+      "property": "#9CDCFE",
+      "function": "#DCDCAA",
+      "class": "#4EC9B0",
+      "keyword": "#C586C0",
+      "string": "#CE9178",
+      "number": "#B5CEA8",
+      "comment": "#D4D4D4"
+    }
+  },
+  "editor.tokenColorCustomizations": {
+    "comments": "#D4D4D4",
+    "textMateRules": [
+      {
+        "scope": [
+          "variable",
+          "variable.other",
+          "variable.parameter",
+          "meta.definition.variable"
+        ],
+        "settings": {
+          "foreground": "#4FC1FF"
+        }
+      },
+      {
+        "scope": [
+          "variable.parameter",
+          "meta.function.parameters"
+        ],
+        "settings": {
+          "foreground": "#FFB86C"
+        }
+      },
+      {
+        "scope": [
+          "entity.name.function",
+          "support.function"
+        ],
+        "settings": {
+          "foreground": "#DCDCAA"
+        }
+      },
+      {
+        "scope": [
+          "entity.name.class",
+          "entity.name.type.class",
+          "support.class"
+        ],
+        "settings": {
+          "foreground": "#4EC9B0"
+        }
+      },
+      {
+        "scope": [
+          "keyword",
+          "storage.type",
+          "storage.modifier"
+        ],
+        "settings": {
+          "foreground": "#C586C0"
+        }
+      },
+      {
+        "scope": [
+          "string",
+          "string.quoted"
+        ],
+        "settings": {
+          "foreground": "#CE9178"
+        }
+      },
+      {
+        "scope": [
+          "constant.numeric",
+          "constant.language"
+        ],
+        "settings": {
+          "foreground": "#B5CEA8"
+        }
+      },
+      {
+        "scope": [
+          "comment",
+          "comment.line",
+          "comment.block"
+        ],
+        "settings": {
+          "foreground": "#D4D4D4",
+          "fontStyle": ""
+        }
+      }
+    ]
+  }
+}
