@@ -56,8 +56,41 @@ for k in range(1, 11) : # 1부터 20까지
     sse.append(km.inertia_) # 군집 / 그룹 / 클러스터 내 자료들 간 오차의 제곱합 측정  
 print(sse) # 클러스터가 많아지면 오차의 제곱합이 줄어든다. 촘촘해진다.
 
-# 오차
+# 오차 시각화
 plt.plot( range(1,11) , sse, marker = 'o')
 plt.show()
 
 # 엘보우 포인트 : SSE(오차의 제곱합) 급격하게 줄어든 포인트 => 최적의 k 
+# 최적의 K 모델 재학습
+km = KMeans(n_clusters=3, random_state=42 )
+km.fit(scaledDf)
+df['cluster'] = km.labels_ # 클러스터 결과물 
+# weight , sweetness , hardness , cluster
+
+# [3] 거리 예측 예측/계산 ( 추론 계산식 ) , 유클리드 거리 
+import numpy as np
+# (1) 클러스트 들의 중심점 
+centerClus = km.cluster_centers_
+print(centerClus)
+
+# (2) 중심점에서 새로운 자료의 오차(차이) 계산 , 제돕의 합 , 제곱근(루트) 씌운다.
+# np.sum(리스트 , axis = 축기준) # 0 : 열 , 1 : 행
+result = np.sqrt(np.sum((centerClus - scaledNewDf)**2, axis=1) ) 
+print(result) # [2.24879629 2.08008944 0.27055329]
+
+print(km.predict(scaledNewDf)) #  [2] , # 유클리드 거리 계싼과 predict 예측과 동일하다. 
+
+# [4] GMM : 가우시안 모델 , + 군집확률
+from sklearn.mixture import GaussianMixture
+# n_components = , k-mean와 유사하게 정규분호(군집)의 수 
+gm = GaussianMixture(n_components=3 , random_state=42) # 객체 생성 
+gm.fit(scaledDf) # 학습 
+print(gm.predict(scaledNewDf))
+print(gm.predict_proba(scaledNewDf)*100)
+
+# 시각화
+plt.scatter(scaledDf[:,0] , scaledDf[ :,1], c = df['cluster'])
+plt.scatter(scaledNewDf[: ,0], scaledNewDf[:,1] , marker = '^')
+plt.show()
+
+# 현재 특성이 3개 이므로 3D 차원 시각화 필여 -> N차원(특성많은) 시각화 힘들다. 
