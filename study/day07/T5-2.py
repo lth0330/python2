@@ -25,7 +25,7 @@ from sklearn.preprocessing import normalize
 vector = normalize( vector)
 print(vector)  # (행 열)  가중치 
 
-# [3] k-mean 분집 모델 , 
+# [3] k-mean 분집 모델 ,  키워드 빈도 군집 # 한계점 : 자료부재 , TfidVectorizer(문맥.의미 이해안함) , 형태소 분석불가 ==> LLM(BERT) 딥러닝 모델 필요 
 from sklearn.cluster import KMeans
 km = KMeans( n_clusters=2 , random_state=42)
 km.fit(vector) # 벡터화된 문자열을 학습
@@ -39,11 +39,6 @@ print(df)       # 0 : 전자기기 , 1 : 과일
 # 3     컴퓨터 모니터 마우스 키보드 전자기기 제품       0
 # 4             과일 딸기 주스 음료 디저트            1
 # 5  전자기기 노트북 인공지능 그래픽카드 컴퓨터 성능     0
-
-
-
-
-
 
 
 
