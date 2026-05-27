@@ -80,7 +80,7 @@ print(result) # [2.24879629 2.08008944 0.27055329]
 
 print(km.predict(scaledNewDf)) #  [2] , # 유클리드 거리 계싼과 predict 예측과 동일하다. 
 
-# [4] GMM : 가우시안 모델 , + 군집확률
+# [4] GMM : 가우시안 모델 , + 군집확률 +
 from sklearn.mixture import GaussianMixture
 # n_components = , k-mean와 유사하게 정규분호(군집)의 수 
 gm = GaussianMixture(n_components=3 , random_state=42) # 객체 생성 
@@ -94,3 +94,67 @@ plt.scatter(scaledNewDf[: ,0], scaledNewDf[:,1] , marker = '^')
 plt.show()
 
 # 현재 특성이 3개 이므로 3D 차원 시각화 필여 -> N차원(특성많은) 시각화 힘들다. 
+
+# [5] PCA : 차원 축소 , 차원이 크면 시각화 불가능하다, 주로 2차원 / 3차원 압축한다.
+from sklearn.decomposition import PCA
+
+# 여러개 특성 / 성분을 가진 모델들을 2/3 차원 변경 , 무게/당도/단단함 => 2차원
+pca = PCA(n_components= 2) # 객체 생성 # 주로 2, 3 으로 사용 
+# 주성분 만들기 : 각 특성/성분 마다 가중치를 더해서 데이터 변동성 계산
+# 예] pca = 무게*가중치1 + 당도*가중치2 + 단단함*가중치3 
+# 
+pcaDf = pca.fit_transform(scaledDf)
+print(pcaDf) # 행 = 데이터 수 , 열 = 주성분 수
+#  [ 0.99270811 -0.29586245]
+#  [-1.64427936  0.09579749]
+#  [ 0.37336606  0.19560958]
+
+# ~~~ 
+df['pca_x'] = pcaDf[:,0] # 첫번째 열을 제 1 주성분  # 데이터의 변동성을 가장 크게 설명하는 주성분
+df['pca_y'] = pcaDf[:,1] # 두번째 열을 제 2 주성분  # 제 1주성분을 직교하면서 두번째로 변동성(가중치)가 가장 크게 설명하는 주성분 
+
+# 주성분의 가중치 확인
+components = pca.n_components_
+print(components)
+# [-1.64427936  0.09579749]
+# [ 0.37336606  0.19560958]
+# [ 1.9534839   0.51885823]
+
+pcaNewDf = pca.transform(scaledNewDf)
+
+# 시각화
+plt.scatter(df['pca_x'] ,df['pca_y'],df['cluster'],marker='o')
+plt.scatter(pcaNewDf[:,0],pcaNewDf[:,1],marker='^')
+plt.xlabel('pca_x')
+plt.ylabel('pca_y')
+plt.show()
+
+
+# [6] 분석모델 스코어 , 실루엣 스코어 (분리 /응집 평가)
+from sklearn.metrics import silhouette_score
+
+# 객체생성 silhouette_score(자료 , 모델군집 )
+sc = silhouette_score(scaledDf, km.labels_) # k-means 평가 모델
+print(sc)      # 0.443044585687068
+
+# gmm 가우시안 모델에서는 k - mean 처럼 labels_ 속성이 없다. 그래서 예측을 통한 군집도를 구한다. 
+sc = silhouette_score(scaledDf , gm.predict(scaledDf)) # GMM 평가 모델
+print(sc)      # 0.46537942714394775
+
+# 스코어 개선 : [1] 최적의 K  [2] PCA 주성분(가중치)  [3] 이상치 제거 (튀는 자료는 군집 제외) 등등
+
+# [7] HDBCAN 모델 ,  자동으로 최적의 k 와 이상치 제거 모델 
+import hdbscan    #  pip install hdbscan
+
+# min_cluster_size= 최소 클러스터 개수 
+# min_samples = 클러스터들의 중심점이 되기 위한 최소 자료(샘플)의 수 
+# prediction_data = True , 학습된 모델이 새로운 예측할 경우 캐수(임시메모리) 확성화 
+hdb = hdbscan.HDBSCAN(min_cluster_size=2, min_samples=2, prediction_data=True)  # 객체 생성
+hdb.fit(scaledDf)
+print(hdb.labels_)  # 군집/그룹 번호는 0부터 시작  , # -1(이상치 샘플) 어디에도 속하지 않은 샘플
+
+# [-1  2  2  0 -1  0 -1 -1 -1  3  4 -1  1  1  1 -1  2  2  1  1  2 -1  0  2
+#  3  2 -1  2 -1 -1  3 -1  4  2  2  4  4 -1]
+
+print(hdbscan.approximate_predict(hdb, scaledDf))
+print(hdbscan.approximate_predict(hdb, scaledNewDf))
